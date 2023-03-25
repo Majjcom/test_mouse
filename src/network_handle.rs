@@ -12,7 +12,14 @@ pub fn handle_stream(mut stream: TcpStream) {
             break;
         }
         let data = std::str::from_utf8_mut(&mut buff[..read_size]).unwrap();
-        let res = prase_data(data).unwrap();
+        let res = prase_data(data);
+        let res = match res {
+            Ok(a) => a,
+            Err(e) => {
+                println!("Handler Error occur: {}", e.to_string());
+                continue;
+            }
+        };
         match res {
             Action::Click(side) => {
                 match side {
