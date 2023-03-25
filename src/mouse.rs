@@ -1,4 +1,5 @@
 use winapi::um::winuser::{mouse_event, GetCursorPos, MOUSEEVENTF_MOVE, MOUSEEVENTF_ABSOLUTE};
+use winapi::um::winuser::{GetSystemMetrics, SM_CXSCREEN, SM_CYSCREEN};
 // use winapi::um::winuser::keybd_event;
 use winapi::shared::windef::POINT;
 
@@ -15,8 +16,10 @@ pub fn move_mouse(dx: i32, dy: i32) {
     unsafe {
         let mut point = POINT{ x: 0, y: 0 };
         GetCursorPos(&mut point);
-        let x = point.x + dx;
-        let y = point.y + dy;
+        let screen_x = GetSystemMetrics(SM_CXSCREEN);
+        let screen_y = GetSystemMetrics(SM_CYSCREEN);
+        let x = (point.x + dx) * 65535 / screen_x;
+        let y = (point.y + dy) * 65535 / screen_y;
         mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE, x as u32, y as u32, 0, 0);
     };
 }
