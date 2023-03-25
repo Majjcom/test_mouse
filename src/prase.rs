@@ -20,14 +20,23 @@ pub enum ClickBtn {
     Left,
     Right,
 }
+pub enum Hold {
+    Down,
+    Up
+}
 
 pub enum Action {
     Click(ClickBtn),
-    Move(MoveMent)
+    Move(MoveMent),
+    Hold(Hold)
 }
 
 pub fn prase_data(s: &str) -> Result<Action, ParseError> {
-    let value: Value = from_str(s).unwrap();
+    let value: Result<Value, serde_json::Error> = from_str(s);
+    let value = match value {
+        Ok(v) => v,
+        Err(_) => return Err(ParseError)
+    };
     let act = value.get("act").unwrap();
     let act = act.as_str().unwrap();
     // let act = String::from(act);
@@ -52,6 +61,14 @@ pub fn prase_data(s: &str) -> Result<Action, ParseError> {
             };
             Ok(Action::Move(movement))
         },
+        _ if act == "hold" => {
+            let down = value.get("down").unwrap().as_bool().unwrap();
+            if down {
+                Ok(Action::Hold(Hold::Down))
+            } else {
+                Ok(Action::Hold(Hold::Up))
+            }
+        }
         _ => Err(ParseError)
     };
     ret
