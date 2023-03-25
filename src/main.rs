@@ -1,22 +1,23 @@
+use std::net::TcpListener;
 use test_mouse::thread_pool::ThreadPool;
-use test_mouse::mouse::{self, MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP};
-use std::{thread, time::Duration};
+use test_mouse::network_handle::handle_stream;
+
 
 fn main() {
-    println!("Hello, world!");
-    mouse::window();
-    {
-        let pool = ThreadPool::new(5);
-        
-        for i in 0..4 {
-            thread::sleep(Duration::from_millis(500));
-            pool.execute(move || {
-                println!("task: {}", i);
-                mouse::move_mouse(0, -10);
-                mouse::click(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP);
-                thread::sleep(Duration::from_millis(20));
-                // mouse::click(MOUSEEVENTF_LEFTUP);
-            })
+    let listener = TcpListener::bind("0.0.0.0:1248").unwrap();
+    let threads = ThreadPool::new(3);
+    println!("Srever prepared.");
+    for stream in listener.incoming() {
+        match stream {
+            Ok(s) => {
+                threads.execute(move || {
+                    println!("Handle connection.");
+                    handle_stream(s);
+                });
+            },
+            Err(e) => {
+                println!("Stream Error occur: {}", e.to_string());
+            }
         }
     }
 }
