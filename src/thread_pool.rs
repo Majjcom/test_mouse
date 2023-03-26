@@ -8,9 +8,9 @@ struct Worker {
 }
 
 impl Worker {
-    pub fn new(id: usize, revecer: Arc<Mutex<Receiver<Message>>>) -> Worker {
+    pub fn new(id: usize, receiver: Arc<Mutex<Receiver<Message>>>) -> Worker {
         let thread = thread::spawn(move || loop {
-            let message = revecer.lock().unwrap().recv().unwrap();
+            let message = receiver.lock().unwrap().recv().unwrap();
             match message {
                 Message::Message(job) => {
                     job();
@@ -54,10 +54,10 @@ pub struct ThreadPool {
 impl ThreadPool {
     pub fn new(n: usize) -> ThreadPool {
         let mut pool = Vec::new();
-        let (sender, recever) = channel::<Message>();
-        let recever = Arc::new(Mutex::new(recever));
+        let (sender, receiver) = channel::<Message>();
+        let receiver = Arc::new(Mutex::new(receiver));
         for id in 0..n {
-            let worker = Worker::new(id, recever.clone());
+            let worker = Worker::new(id, receiver.clone());
             pool.push(worker);
         }
         
