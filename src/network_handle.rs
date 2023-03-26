@@ -2,7 +2,7 @@ use std::net::TcpStream;
 use std::io::Read;
 
 use crate::mouse;
-use crate::prase::{prase_data, Action, ClickBtn, Hold};
+use crate::parse::{prase_data, Action, ClickBtn, Hold};
 
 pub fn handle_stream(mut stream: TcpStream) {
     let mut buff:[u8; 1024] = [0; 1024];
