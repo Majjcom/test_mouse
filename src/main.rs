@@ -6,7 +6,7 @@ use test_mouse::network_handle::handle_stream;
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:1248").unwrap();
     let threads = ThreadPool::new(3);
-    println!("Srever prepared.");
+    println!("Server prepared.");
     for stream in listener.incoming() {
         match stream {
             Ok(s) => {
