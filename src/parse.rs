@@ -20,6 +20,7 @@ pub enum ClickBtn {
     Left,
     Right,
 }
+
 pub enum Hold {
     Down,
     Up
