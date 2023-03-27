@@ -25,10 +25,16 @@ pub enum Hold {
     Up
 }
 
+pub enum Wheel {
+    Up,
+    Down
+}
+
 pub enum Action {
     Click(ClickBtn),
     Move(MoveMent),
-    Hold(Hold)
+    Hold(Hold),
+    Wheel(Wheel)
 }
 
 pub fn prase_data(s: &str) -> Result<Action, ParseError> {
@@ -68,7 +74,15 @@ pub fn prase_data(s: &str) -> Result<Action, ParseError> {
             } else {
                 Ok(Action::Hold(Hold::Up))
             }
-        }
+        },
+        _ if act == "wheel" => {
+            let down = value.get("down").unwrap().as_bool().unwrap();
+            if down {
+                Ok(Action::Wheel(Wheel::Down))
+            } else {
+                Ok(Action::Wheel(Wheel::Up))
+            }
+        },
         _ => Err(ParseError)
     };
     ret

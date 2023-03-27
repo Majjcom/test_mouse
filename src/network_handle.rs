@@ -2,7 +2,7 @@ use std::net::TcpStream;
 use std::io::Read;
 
 use crate::mouse;
-use crate::parse::{prase_data, Action, ClickBtn, Hold};
+use crate::parse::*;
 
 pub fn handle_stream(mut stream: TcpStream) {
     let mut buff:[u8; 1024] = [0; 1024];
@@ -44,6 +44,12 @@ pub fn handle_stream(mut stream: TcpStream) {
                     Hold::Up => mouse::mouse_key(
                         mouse::MOUSEEVENTF_LEFTUP
                     )
+                };
+            },
+            Action::Wheel(w) => {
+                match w {
+                    Wheel::Down => mouse::mouse_wheel(true),
+                    Wheel::Up => mouse::mouse_wheel(false)
                 };
             }
         }
