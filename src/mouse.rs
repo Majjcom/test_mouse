@@ -1,11 +1,11 @@
 use winapi::um::winuser::{
     mouse_event, MOUSEEVENTF_MOVE,
-    MOUSEEVENTF_WHEEL, WHEEL_DELTA
+    MOUSEEVENTF_WHEEL, WHEEL_DELTA,
 };
 
 use winapi::shared::minwindef::DWORD;
 pub use winapi::um::winuser::{
-    MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP
+    MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP,
 };
 
 pub fn mouse_key(method: DWORD) {
@@ -21,6 +21,18 @@ pub fn mouse_wheel(down: bool) {
             m = -m;
         }
         mouse_event(MOUSEEVENTF_WHEEL, 0, 0, m as u32, 0);
+    }
+}
+
+pub fn hide() {
+    use std::ptr::null_mut;
+    use winapi::um::wincon::GetConsoleWindow;
+    use winapi::um::winuser::{ShowWindow, SW_HIDE};
+    unsafe {
+        let hwnd = GetConsoleWindow();
+        if hwnd != null_mut() {
+            ShowWindow(hwnd, SW_HIDE);
+        }
     }
 }
 
